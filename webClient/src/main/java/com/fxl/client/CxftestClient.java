@@ -1,6 +1,7 @@
 package com.fxl.client;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -100,6 +101,10 @@ public class CxftestClient {
     		OMElement result = serviceClient.sendReceive(method);
     		//result就是获取的数据,剩下需要自己解析
     		System.out.println(result.toString());
+    		
+    		Map<String, Object> results = getResults(result);
+    		System.out.println(results.toString());
+    		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -125,5 +130,35 @@ public class CxftestClient {
 			method.build();
 		}
 		return method;
+	}
+	
+	/**
+	 * 将OMElement转换为Map对象
+	 * @createTime 2017年11月8日,下午4:55:00
+	 * @createAuthor fangxilin
+	 * @param element
+	 * @return
+	 */
+	public static Map<String, Object> getResults(OMElement element) {
+		if (element == null) {
+			return null;
+		}
+		System.out.println("IN: " + element); // 新增
+		Iterator<?> iterator = element.getChildElements();
+		Iterator<?> innerItr;
+		Map<String, Object> data = new HashMap<>();
+		OMElement result = null;
+		while (iterator.hasNext()) {
+			result = (OMElement) iterator.next();
+			System.out.println("While: " + result); // 新增
+			innerItr = result.getChildElements();
+			while (innerItr.hasNext()) { // 新增
+				OMElement elem = (OMElement) innerItr.next(); // 新增
+				System.out.println("\tWhile: " + elem); // 新增
+				System.out.println("\t\t" + elem.getLocalName() + ": " + elem.getText()); // 新增
+				data.put(elem.getLocalName(), elem.getText());
+			} // 新增
+		}
+		return data;
 	}
 }
