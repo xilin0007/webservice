@@ -29,7 +29,6 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
-import org.apache.axis.message.MessageElement;
 import org.apache.axis.wsdl.gen.Parser;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
@@ -167,7 +166,11 @@ public class WebService {
 			}
 			call.setReturnType(XMLType.XSD_STRING);
 		}
-		call.setReturnType(new QName(this.nameSpaceUri, "UserManagerResponseUserManagerResult"));
+		
+		
+		
+		/**返回类型为自定义类的，非String的------start*/
+		/*call.setReturnType(new QName(this.nameSpaceUri, "UserManagerResponseUserManagerResult"));
 		//call.setReturnClass(org.tempuri.UserManagerResponseUserManagerResult.class);
 		call.setReturnQName(new QName(this.nameSpaceUri, "UserManagerResponseUserManagerResult"));
 		//注册序列化和反序列化类 
@@ -176,6 +179,8 @@ public class WebService {
 		        new QName(this.nameSpaceUri,"UserManagerResponseUserManagerResult"),
 		        new BeanSerializerFactory(UserManagerResponseUserManagerResult.class, new QName(this.nameSpaceUri, "UserManagerResponseUserManagerResult")),
 		        new BeanDeserializerFactory(UserManagerResponseUserManagerResult.class, new QName(this.nameSpaceUri, "UserManagerResponseUserManagerResult")));
+		*/
+		/**返回类型为自定义类的，非String的------end*/
 		return call;
 	}
 	
@@ -296,18 +301,29 @@ public class WebService {
 	}
 
 	public String getResponseXML(String method, Object[] params, String[] fileds, Integer timeOut) throws Exception {
-	    UserManagerResponseUserManagerResult returnStr = null;
-		Call call = getCall(method, params, fileds);
-		if (timeOut != null) {
-			call.setTimeout(timeOut);
-		}
-		String result = "";
-		returnStr = (UserManagerResponseUserManagerResult) call.invoke(params);
-		if (returnStr != null) {
-		    MessageElement[] any = returnStr.get_any();
-		    result = any[0].getAsString();
+	    Object returnStr = null;
+        Call call = getCall(method, params, fileds);
+        if (timeOut != null) {
+            call.setTimeout(timeOut);
         }
-		return result;
+        returnStr = call.invoke(params);
+        return ((returnStr == null) ? "" : returnStr.toString());
+	    
+        /**返回类型为自定义类的，非String的------start*/
+        /*UserManagerResponseUserManagerResult returnStr = null;
+        Call call = getCall(method, params, fileds);
+        if (timeOut != null) {
+            call.setTimeout(timeOut);
+        }
+        String result = "";
+        returnStr = (UserManagerResponseUserManagerResult) call.invoke(params);
+        if (returnStr != null) {
+            MessageElement[] any = returnStr.get_any();
+            result = any[0].getAsString();
+        }
+        return result;
+        */
+        /**返回类型为自定义类的，非String的------end*/
 	}
 
 	public String getResponseXML(String method, Object[] params, String[] fileds) throws Exception {
@@ -332,7 +348,7 @@ public class WebService {
 			} else if (pram.length == 6)
 				objects = client.invoke(method, new Object[]{pram[0], pram[1], pram[2], pram[3], pram[4], pram[5]});
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+		    throw new RuntimeException(e);
 		}
 
 		return objects[0].toString();
